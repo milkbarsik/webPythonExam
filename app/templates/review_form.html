@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Рецензия на {{ book.title }} – Электронная библиотека{% endblock %}
+
+{% block content %}
+<h1>Рецензия на «{{ book.title }}»</h1>
+<form method="post">
+  <div class="mb-3">
+    <label for="rating" class="form-label">Оценка</label>
+    <select id="rating" name="rating" class="form-select">
+      {% for val,label in {5:'Отлично',4:'Хорошо',3:'Удовл.',2:'Неуд.',1:'Плохо',0:'Ужасно'}.items() %}
+      <option value="{{ val }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="text" class="form-label">Текст рецензии</label>
+    <textarea id="text" name="text" class="form-control" rows="5"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Сохранить</button>
+  <a href="{{ url_for('main.book_view', book_id=book.id) }}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

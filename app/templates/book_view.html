@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}{{ book.title }} – Электронная библиотека{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    {% if book.cover %}
+      <img
+        src="{{ url_for('main.covers', filename=book.cover.filename) }}"
+        class="img-fluid"
+        alt="Обложка {{ book.title }}"
+      >
+    {% endif %}
+  </div>
+  <div class="col-md-8">
+    <h1>{{ book.title }}</h1>
+    <p><strong>Автор:</strong> {{ book.author }}</p>
+    <p><strong>Издательство:</strong> {{ book.publisher }}</p>
+    <p><strong>Год:</strong> {{ book.year }}</p>
+    <p><strong>Страниц:</strong> {{ book.pages }}</p>
+    <p><strong>Жанры:</strong>
+      {% for g in book.genres %}
+        {{ g.name }}{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+  </div>
+</div>
+
+<hr>
+
+<h2>Описание</h2>
+<div>{{ book_html|safe }}</div>
+
+<hr>
+
+<h2>Рецензии ({{ book.reviews|length }})</h2>
+{% for r in book.reviews %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">
+        {{ r.user.last_name }} {{ r.user.first_name }}
+        <small class="text-muted">— {{ r.rating }}/5</small>
+      </h5>
+      <p class="card-text">{{ r.text|markdown }}</p>
+      <p class="text-end"><small>{{ r.created_at.strftime('%d.%m.%Y %H:%M') }}</small></p>
+      {% if current_user.is_authenticated and current_user.role.name in ['admin','moderator'] %}
+      <form method="post" action="{{ url_for('main.review_delete', review_id=r.id) }}">
+        <button class="btn btn-sm btn-outline-danger">Удалить</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <p>Пока нет рецензий.</p>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+  {% if not existing_review %}
+    <a href="{{ url_for('main.book_review', book_id=book.id) }}" class="btn btn-primary">
+      Написать рецензию
+    </a>
+  {% endif %}
+{% else %}
+  <p><a href="{{ url_for('auth.login', next=request.path) }}">Войдите</a>, чтобы оставить рецензию.</p>
+{% endif %}
+
+{% endblock %}

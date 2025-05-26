@@ -1,0 +1,98 @@
+{% macro book_form(action_url, genres, errors, form, editing=False, book=None) %}
+<form method="post" action="{{ action_url }}" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label for="title" class="form-label">Название</label>
+    <input
+      type="text"
+      id="title"
+      name="title"
+      class="form-control {% if errors.title %}is-invalid{% endif %}"
+      value="{{ form.title or (book.title if book) }}"
+    >
+    {% if errors.title %}<div class="invalid-feedback">{{ errors.title }}</div>{% endif %}
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Описание (Markdown)</label>
+    <textarea
+      id="description"
+      name="description"
+      class="form-control {% if errors.description %}is-invalid{% endif %}"
+      rows="6"
+    >{{ form.description or (book.description if book) }}</textarea>
+    {% if errors.description %}<div class="invalid-feedback">{{ errors.description }}</div>{% endif %}
+  </div>
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <label for="year" class="form-label">Год</label>
+      <input
+        type="number"
+        id="year"
+        name="year"
+        class="form-control {% if errors.year %}is-invalid{% endif %}"
+        value="{{ form.year or (book.year if book) }}"
+      >
+      {% if errors.year %}<div class="invalid-feedback">{{ errors.year }}</div>{% endif %}
+    </div>
+    <div class="col-md-4 mb-3">
+      <label for="publisher" class="form-label">Издательство</label>
+      <input
+        type="text"
+        id="publisher"
+        name="publisher"
+        class="form-control {% if errors.publisher %}is-invalid{% endif %}"
+        value="{{ form.publisher or (book.publisher if book) }}"
+      >
+      {% if errors.publisher %}<div class="invalid-feedback">{{ errors.publisher }}</div>{% endif %}
+    </div>
+    <div class="col-md-5 mb-3">
+      <label for="author" class="form-label">Автор</label>
+      <input
+        type="text"
+        id="author"
+        name="author"
+        class="form-control {% if errors.author %}is-invalid{% endif %}"
+        value="{{ form.author or (book.author if book) }}"
+      >
+      {% if errors.author %}<div class="invalid-feedback">{{ errors.author }}</div>{% endif %}
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="pages" class="form-label">Страниц</label>
+    <input
+      type="number"
+      id="pages"
+      name="pages"
+      class="form-control {% if errors.pages %}is-invalid{% endif %}"
+      value="{{ form.pages or (book.pages if book) }}"
+    >
+    {% if errors.pages %}<div class="invalid-feedback">{{ errors.pages }}</div>{% endif %}
+  </div>
+  <div class="mb-3">
+    <label for="genres" class="form-label">Жанры</label>
+    <select
+      id="genres"
+      name="genres"
+      class="form-select {% if errors.genres %}is-invalid{% endif %}"
+      multiple
+    >
+      {% for g in genres %}
+      <option value="{{ g.id }}"
+        {% if g.id|string in form.getlist('genres') %}
+          selected
+        {% elif book and g in book.genres %}
+          selected
+        {% endif %}
+      >{{ g.name }}</option>
+      {% endfor %}
+    </select>
+    {% if errors.genres %}<div class="invalid-feedback">{{ errors.genres }}</div>{% endif %}
+  </div>
+  {% if not editing %}
+  <div class="mb-3">
+    <label for="cover" class="form-label">Обложка</label>
+    <input type="file" id="cover" name="cover" class="form-control">
+  </div>
+  {% endif %}
+  <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+{% endmacro %}

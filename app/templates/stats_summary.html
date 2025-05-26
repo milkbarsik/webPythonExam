@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Статистика просмотров – Статистика{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item">
+    <a
+      class="nav-link"
+      href="{{ url_for('stats.stats_log') }}"
+    >Журнал действий</a>
+  </li>
+  <li class="nav-item">
+    <a
+      class="nav-link active"
+      href="{{ url_for('stats.stats_summary') }}"
+    >Статистика просмотров</a>
+  </li>
+</ul>
+
+<h1 class="h4 mb-4">Статистика просмотров книг</h1>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <label for="date_from" class="form-label">Дата от</label>
+    <input type="date" id="date_from" name="date_from"
+           class="form-control" value="{{ date_from }}">
+  </div>
+  <div class="col-auto">
+    <label for="date_to" class="form-label">Дата до</label>
+    <input type="date" id="date_to" name="date_to"
+           class="form-control" value="{{ date_to }}">
+  </div>
+  <div class="col-auto align-self-end">
+    <button type="submit" class="btn btn-primary">Применить</button>
+  </div>
+</form>
+
+<a href="{{ url_for('stats.export_summary',
+                    date_from=date_from,
+                    date_to=date_to) }}"
+   class="btn btn-outline-primary mb-3">
+  Экспорт в CSV
+</a>
+
+<table class="table table-striped">
+  <thead>
+    <tr><th>#</th><th>Книга</th><th>Просмотров</th></tr>
+  </thead>
+  <tbody>
+    {% for title,cnt in pagination.items %}
+    <tr>
+      <td>{{ loop.index + (pagination.page-1)*pagination.per_page }}</td>
+      <td>{{ title }}</td>
+      <td>{{ cnt }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<nav>
+  <ul class="pagination">
+    {% if pagination.has_prev %}
+    <li class="page-item">
+      <a class="page-link"
+         href="{{ url_for('stats.stats_summary',
+                          page=pagination.prev_num,
+                          date_from=date_from,
+                          date_to=date_to) }}"
+      >←</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">←</span></li>
+    {% endif %}
+
+    {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+      {% if p %}
+      <li class="page-item {% if p==pagination.page %}active{% endif %}">
+        <a class="page-link"
+           href="{{ url_for('stats.stats_summary', page=p,
+                            date_from=date_from, date_to=date_to) }}"
+        >{{ p }}</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+    <li class="page-item">
+      <a class="page-link"
+         href="{{ url_for('stats.stats_summary',
+                          page=pagination.next_num,
+                          date_from=date_from,
+                          date_to=date_to) }}"
+      >→</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">→</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}

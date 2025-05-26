@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m %}
+
+{% if action=='create' %}
+  {% set title = 'Добавление книги' %}
+  {% set url = url_for('main.book_create') %}
+{% else %}
+  {% set title = 'Редактирование книги' %}
+  {% set url = url_for('main.book_edit', book_id=book.id) %}
+{% endif %}
+
+{% block title %}{{ title }} – Электронная библиотека{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+{% if errors %}
+  <div class="alert alert-danger mb-3">
+    Проверьте корректность введённых данных.
+  </div>
+{% endif %}
+{{ m.book_form(url, genres, errors, form, action=='edit', book) }}
+<a href="{{ url_for('main.index') }}" class="btn btn-secondary mt-3">Отмена</a>
+{% endblock %}
