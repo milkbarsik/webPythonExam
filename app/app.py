@@ -10,8 +10,8 @@ import os
 def create_app():
     app = Flask(__name__, static_folder='static')
     app.config.update(
-        SECRET_KEY='your-secret-key',
-        SQLALCHEMY_DATABASE_URI='postgresql://postgres:barsik@localhost:5432/exam',
+        SECRET_KEY='romanikhin',
+        SQLALCHEMY_DATABASE_URI='postgresql://user:FJ6syTo6r5k1tIUohmmiBsja9MfVWzli@dpg-d0q9g6h5pdvs73f1r97g-a/exam_zcbm',
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         UPLOAD_FOLDER=os.path.join(app.root_path, 'static', 'covers')
     )
